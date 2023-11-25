@@ -20,12 +20,13 @@ char teclas[4][4] = { { '1', '2', '3', 'A' },
 Keypad teclado1 = Keypad(makeKeymap(teclas), pinosLinhas, pinosColunas, 4, 4);
 
 // Definição dos pinos
-const int ledVerm = 9;      // Pino para led Vermelho
-const int ledAmarelo = 10;  // Pino para led Azul
-const int ledVerd = 11;     // Pino para led Verde
-const int buzzerPino = 12;  // Pino para o Buzzer
-const int botaoVerm = 13;   // Pino para o botao Vermelho  GAME
-const int botaoVerd = 17;   // Pino A3 para o botao Verde  GAME
+
+const int ledAmarelo = 9;   // Pino para led Azul
+const int ledVerd = 10;     // Pino para led Verde
+const int ledVerm = 11;     // Pino para led Vermelho
+const int botaoVerm = 16;   // Pino para o botao Vermelho  GAME
+const int botaoVerd = 15;   // Pino A3 para o botao Verde  GAME
+const int buzzerPino = 17;  // Pino para o Buzzer
 /*const int botaoVerm = 2;      // Pino para o botao Vermelho  GAME
 const int botaoVerd = 3;      // Pino para o botao Verde  GAME
 const int botaoPreto = 4;     // Pino para o botao Preto  MENU Padrao
@@ -101,7 +102,7 @@ void loop() {
   if (millis() - buzzerMenu >= 500) {  // ativa o buzzer para dizer que o jogo esta rolando
     buzzerEstado = !buzzerEstado;
     buzzerEstado = buzzerEstado ? HIGH : LOW;
-    tone(buzzerPino, buzzerEstado);  //Alteração cíclica do estado do pino
+    digitalWrite(buzzerPino, buzzerEstado);  //Alteração cíclica do estado do pino
     buzzerMenu = millis();
   }
 
