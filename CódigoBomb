@@ -44,6 +44,7 @@ int segundos = 0;                                            //contar segundos d
 int decimas = 0;                                             //contar decimais da partida
 long milisegundos = 0;                                       //variavel para a funcao millis
 int valorTempoJogo = 0;                                      //tempo maximo que o usuario digitou para o game
+int valorTempoBomba = 0;                                     //tempo para a bomba explodir MODE PADRAO
 unsigned long tempoJogo = 0;                                 // PARA CALCULAR O TEMPO DO GAME
 unsigned long tempoInicioJogo = 0;                           // PARA CALCULAR O TEMPO DO GAME
 unsigned long tempoUltimaAtualizacao = 0;                    // PARA CALCULAR O TEMPO DO GAME
@@ -118,6 +119,7 @@ void loop() {
   if (tecla_pressionada == 'A') {  // Seleciona o modo de jogo Padrao
 gotoPadrao:
     valorTempoJogo = 0;
+    valorTempoBomba = 0;
     lcd.clear();
     digitalWrite(ledAmarelo, LOW);
     digitalWrite(ledVerm, HIGH);
@@ -130,7 +132,7 @@ gotoPadrao:
     lcd.setCursor(0, 0);            // POSICIONA O CURSOR NA PRIMEIRA COLUNA DA LINHA 2  //para lcd
     lcd.print("   mode padrao  ");  //para lcd
     lcd.setCursor(0, 1);            // POSICIONA O CURSOR NA PRIMEIRA COLUNA DA LINHA 2  //para lcd
-    lcd.print("Tempo Minuto:");
+    lcd.print("Tempo Rodada:");
     while (1) {
       char totalGame = teclado1.getKey();  //pra pegar o tempo total do game padrao
       if (totalGame) {
@@ -142,7 +144,12 @@ gotoPadrao:
           valorTempoJogo = valorTempoJogo * 10 + (totalGame - '0');
         } else if (totalGame == '*') {
 
+
+
+
+
           while (1) {
+
             lcd.setCursor(0, 0);
             lcd.print("Serao ");
             lcd.print(valorTempoJogo);
@@ -155,506 +162,575 @@ gotoPadrao:
               Serial.println("menu");  //-- para debug
               return 1;                // funcao mestre para voltar para o menu iniciar
             } else if (tecla_pressionada == '*') {
-              tone(buzzerPino, 1000);  // Frequência do som positivo debug para dizer que iniciou o game
-              delay(250);              // Duração do som positivo
-              noTone(buzzerPino);      // Desliga o som
-              modoPadrao(valorTempoJogo);
-            } else if (tecla_pressionada == '#') {
-              goto gotoPadrao;
-            }
+          
+                  tone(buzzerPino, 1000);  // Frequência do som positivo debug para dizer que iniciou o game
+                  delay(100);              // Duração do som positivo
+                  noTone(buzzerPino);      // Desliga o som
+lcd.setCursor(0, 0);            // POSICIONA O CURSOR NA PRIMEIRA COLUNA DA LINHA 2  //para lcd
+    lcd.print("   mode padrao  ");  //para lcd
+              lcd.setCursor(0, 1);  // POSICIONA O CURSOR NA PRIMEIRA COLUNA DA LINHA 2  //para lcd
+              lcd.print("Tempo  Bomba:   ");
+              while (1) {                             //para pegar o tempo da bomba
+                char totalBomba = teclado1.getKey();  //pra pegar o tempo total da bomba no modo padrao
+                if (totalBomba) {
+                  lcd.setCursor(13,1);
+                  lcd.print(totalBomba);
+                  
+                  tone(buzzerPino, 1000);  // Frequência do som positivo debug para dizer que iniciou o game
+                  delay(100);              // Duração do som positivo
+                  noTone(buzzerPino);      // Desliga o som
+                  if (totalBomba >= '0' && totalBomba <= '9') {
+                    valorTempoBomba = valorTempoBomba * 10 + (totalBomba - '0');
+                  } else if (totalGame == '*') {
+                    while (1) {
+                      lcd.setCursor(0, 0);
+                      lcd.print("Serao ");
+                      lcd.print(valorTempoBomba);
+                      Serial.println(valorTempoBomba);
+                      lcd.print(" Min?    ");
+                      lcd.setCursor(0, 1);
+                      lcd.print("* SIM  |  # NAO ");
+                      tecla_pressionada = teclado1.getKey();
+                      if (tecla_pressionada == 'D') {
+                        Serial.println("menu");  //-- para debug
+                        return 1;                // funcao mestre para voltar para o menu iniciar
+                      } else if (tecla_pressionada == '*') {
+                        tone(buzzerPino, 1000);  // Frequência do som positivo debug para dizer que iniciou o game
+                        delay(250);              // Duração do som positivo
+                        noTone(buzzerPino);      // Desliga o som
+                        modoPadrao(valorTempoJogo, valorTempoBomba);
+                      } else if (tecla_pressionada == '#') {
+                        goto gotoPadrao;
+                      }
+                    }
+
+                  }
+
+
+                }
+                }
+
+                }
           }
-        } else if (totalGame == 'D') {
-          Serial.println("menu");  //-- para debug
-          return 1;                // funcao mestre para voltar para o menu iniciar
-        }
-      }
-    }
-  }
+                  } else if (totalGame == 'D') {
+                    Serial.println("menu");  //-- para debug
+                    return 1;                // funcao mestre para voltar para o menu iniciar
+                  }
+                }
+              }
+            }
 
 
 
 
-  else if (tecla_pressionada == 'B') {  // Seleciona o modo de jogo Conquista
+            else if (tecla_pressionada == 'B') {  // Seleciona o modo de jogo Conquista
 gotoConquista:
-    valorTempoJogo = 0;
-    lcd.clear();
-    digitalWrite(ledAmarelo, LOW);
-    digitalWrite(ledVerd, HIGH);
-    tone(buzzerPino, 1000);  // Frequência do som positivo debug para dizer que iniciou o game
-    delay(100);              // Duração do som positivo
-    noTone(buzzerPino);      // Desliga o som
-    delay(500);
-    digitalWrite(ledVerd, LOW);
-    Serial.println("mode conquista");  //-- para debug
-    lcd.setCursor(0, 0);               // POSICIONA O CURSOR NA PRIMEIRA COLUNA DA LINHA 2  //para lcd
-    lcd.print(" mode conquista ");     //para lcd
-    lcd.setCursor(0, 1);               // POSICIONA O CURSOR NA PRIMEIRA COLUNA DA LINHA 2  //para lcd
-    lcd.print("Tempo Minuto:");
-    while (1) {
-      char totalGame = teclado1.getKey();  //pra pegar o tempo total do game conquista
-      if (totalGame) {
-        lcd.print(totalGame);
-        tone(buzzerPino, 1000);  // Frequência do som positivo debug para dizer que iniciou o game
-        delay(100);              // Duração do som positivo
-        noTone(buzzerPino);      // Desliga o som
-        if (totalGame >= '0' && totalGame <= '9') {
-          valorTempoJogo = valorTempoJogo * 10 + (totalGame - '0');
-        } else if (totalGame == '*') {
-
-          while (1) {
-            lcd.setCursor(0, 0);
-            lcd.print("Serao ");
-            lcd.print(valorTempoJogo);
-            Serial.println(valorTempoJogo);
-            lcd.print(" Min?    ");
-            lcd.setCursor(0, 1);
-            lcd.print("* SIM  |  # NAO ");
-            tecla_pressionada = teclado1.getKey();
-            if (tecla_pressionada == 'D') {
-              Serial.println("menu");  //-- para debug
-              return 1;                // funcao mestre para voltar para o menu iniciar
-            } else if (tecla_pressionada == '*') {
+              valorTempoJogo = 0;
+              lcd.clear();
+              digitalWrite(ledAmarelo, LOW);
+              digitalWrite(ledVerd, HIGH);
               tone(buzzerPino, 1000);  // Frequência do som positivo debug para dizer que iniciou o game
-              delay(250);              // Duração do som positivo
+              delay(100);              // Duração do som positivo
               noTone(buzzerPino);      // Desliga o som
-              modoConquista(valorTempoJogo);
-            } else if (tecla_pressionada == '#') {
-              goto gotoConquista;
+              delay(500);
+              digitalWrite(ledVerd, LOW);
+              Serial.println("mode conquista");  //-- para debug
+              lcd.setCursor(0, 0);               // POSICIONA O CURSOR NA PRIMEIRA COLUNA DA LINHA 2  //para lcd
+              lcd.print(" mode conquista ");     //para lcd
+              lcd.setCursor(0, 1);               // POSICIONA O CURSOR NA PRIMEIRA COLUNA DA LINHA 2  //para lcd
+              lcd.print("Tempo Rodada:");
+              while (1) {
+                char totalGame = teclado1.getKey();  //pra pegar o tempo total do game conquista
+                if (totalGame) {
+                  lcd.print(totalGame);
+                  tone(buzzerPino, 1000);  // Frequência do som positivo debug para dizer que iniciou o game
+                  delay(100);              // Duração do som positivo
+                  noTone(buzzerPino);      // Desliga o som
+                  if (totalGame >= '0' && totalGame <= '9') {
+                    valorTempoJogo = valorTempoJogo * 10 + (totalGame - '0');
+                  } else if (totalGame == '*') {
+
+                    while (1) {
+                      lcd.setCursor(0, 0);
+                      lcd.print("Serao ");
+                      lcd.print(valorTempoJogo);
+                      Serial.println(valorTempoJogo);
+                      lcd.print(" Min?    ");
+                      lcd.setCursor(0, 1);
+                      lcd.print("* SIM  |  # NAO ");
+                      tecla_pressionada = teclado1.getKey();
+                      if (tecla_pressionada == 'D') {
+                        Serial.println("menu");  //-- para debug
+                        return 1;                // funcao mestre para voltar para o menu iniciar
+                      } else if (tecla_pressionada == '*') {
+                        tone(buzzerPino, 1000);  // Frequência do som positivo debug para dizer que iniciou o game
+                        delay(250);              // Duração do som positivo
+                        noTone(buzzerPino);      // Desliga o som
+                        modoConquista(valorTempoJogo);
+                      } else if (tecla_pressionada == '#') {
+                        goto gotoConquista;
+                      }
+                    }
+                  } else if (totalGame == 'D') {
+                    Serial.println("menu");  //-- para debug
+                    return 1;                // funcao mestre para voltar para o menu iniciar
+                  }
+                }
+              }
             }
           }
-        } else if (totalGame == 'D') {
-          Serial.println("menu");  //-- para debug
-          return 1;                // funcao mestre para voltar para o menu iniciar
-        }
-      }
-    }
-  }
-}
 
-// Lógica do Modo Padrão
-void modoPadrao(int valorTempoJogo) {
-  digitalWrite(ledAmarelo, HIGH);
-  digitalWrite(ledVerm, HIGH);
-  digitalWrite(ledVerd, HIGH);
-  delay(300);
-  digitalWrite(ledAmarelo, LOW);
-  digitalWrite(ledVerm, LOW);
-  digitalWrite(ledVerd, LOW);
-
-  tempoInicioJogo = millis();  //para zerar o millis e contar o tempo maximo corretamente
-  lcd.clear();
-  tempoMillisLcd = millis();
-
-  while (1 == 1) {
-
-    if (millis() - tempoLed >= 1000) {  // faz piscar o led para dizer que o jogo esta rolando
-      estadoLed = !estadoLed;
-      digitalWrite(ledVerd, !estadoLed);
-      tempoLed = millis();
-    }
-
-
-
-    if (millis() - tempoJogo >= 1000) {  // para atualizar o tempo para fim do game no lcd
-
-      lcd.setCursor(0, 0);
-      lcd.print("Tempo MAX ");
-      lcd.print(valorTempoJogo);
-      lcd.print("MIN");
-      lcd.setCursor(0, 1);  // POSICIONA O CURSOR NA PRIMEIRA COLUNA DA LINHA 2  //para lcd
-      tempoJogo = millis() - tempoInicioJogo;
-      lcd.print((tempoJogo / 1000) / 60);  //minuto no lcd
-      lcd.setCursor(2, 1);
-      lcd.print(":");
-      lcd.print(tempoJogo / 1000);  //segundo no lcd -- esta errado -- nao zera no segundo 60 fodase
-
-
-
-
-
-      if ((tempoJogo / 1000) / 60 == valorTempoJogo) {
-        Serial.println("CT WIN!");  //para debug
-        Serial.println("Bomba nao ativa");
-
-        lcd.setCursor(0, 0);
-        lcd.print("CT WIN!          ");
-        lcd.setCursor(0, 1);
-        lcd.print("Bomba nao ativa");
-        lcd.backlight();               // liga a luminacao do display
-
-        for (int i = 0; i < 8; i++) {  // reprodução da melodia 1
-          tone(buzzerPino, melody1[i], noteDuration1);
-          delay(50);
-          noTone(buzzerPino);
-          delay(50);
-        }
-        
-        while (1) {
-          tecla_pressionada = teclado1.getKey();
-          if (tecla_pressionada == 'D') {
-            Serial.println("menu");  //-- para debug
-            return 1;                // funcao mestre para voltar para o menu iniciar
-          }
-        }
-      }
-    }
-
-
-    tecla_pressionada = teclado1.getKey();
-    if (tecla_pressionada == 'D') {
-      lcd.backlight();         // liga a luminacao do display
-      Serial.println("menu");  //-- para debug
-      return 1;                // funcao mestre para voltar para o menu iniciar
-    } else if (tecla_pressionada) {
-      lcd.backlight();  // liga a luminacao do display
-    }
-
-
-    Serial.println(millis() - tempoMillisLcd);  //para debug do tempo do lcd
-    if (millis() - tempoMillisLcd >= 60000) {   //se a bomba ficar 1min sem interação o display apaga a iluminação
-      lcd.noBacklight();                        // desliga a iluminacao do display
-      tempoMillisLcd = millis();
-    }
-
-    if (digitalRead(botaoVerd) == LOW) {  // para caso o CT vença sem o terror ativar a bomba
-      lcd.backlight();                    // liga a luminacao do display
-      digitalWrite(ledVerm, LOW);
-      digitalWrite(ledVerd, HIGH);
-      Serial.println("CT Win");
-      Serial.println("Bomba Inutilizada");
-      lcd.setCursor(0, 0);
-      lcd.print("   CT Win       ");  //para lcd
-      lcd.setCursor(0, 1);            // POSICIONA O CURSOR NA PRIMEIRA COLUNA DA LINHA 2  //para lcd
-      lcd.print("BombaInutilizada");
-      for (int i = 0; i < 8; i++) {  // reprodução da melodia 1
-        tone(buzzerPino, melody1[i], noteDuration1);
-        delay(50);
-        noTone(buzzerPino);
-        delay(50);
-      }
-
-
-      while (1) {
-        tecla_pressionada = teclado1.getKey();
-        if (tecla_pressionada == 'D') {
-          Serial.println("menu");  //-- para debug
-          return 1;                // funcao mestre para voltar para o menu iniciar
-        }
-      }
-    }
-
-    int estadoBotao = digitalRead(botaoVerm);
-
-    // Verifica se o botão foi pressionado (transição de HIGH para LOW) para começar a calcular para a ativação da bomba
-    if (estadoBotao == LOW && !botaoPressionado) {
-      tempoInicio = millis();  // Armazena o tempo de início da pressão
-      botaoPressionado = true;
-      Serial.println("Botão pressionado");  //-- para debug
-      lcd.backlight();                      // liga a luminacao do display
-    }
-    // Verifica se o botão foi liberado
-    if (estadoBotao == HIGH && botaoPressionado) {
-      duracaoPressao = millis() - tempoInicio;  // Calcula a duração da pressão
-      botaoPressionado = false;
-
-      if (duracaoPressao >= 10000) {  // Se a duração da pressão for >= a 10 segundos ativa a bomba
-        lcd.backlight();              // liga a luminacao do display
-
-        tone(buzzerPino, 800);
-        delay(400);
-        noTone(buzzerPino);
-        Serial.print("bomba ativa");  //-- para debug
-        lcd.setCursor(0, 0);
-        lcd.print("  Bomba Ativa   ");  //para lcd
-        lcd.setCursor(0, 1);            // POSICIONA O CURSOR NA PRIMEIRA COLUNA DA LINHA 2  //para lcd
-
-        tempoinicioBomba = millis();  // para zerar o millis e contar os 15 segundos corretamente
-        tempoMillisLcd = millis();    // para zerar o millis e contar o tempo de apagar o lcd corretamente
-        tempoBomba = 0;
-
-        while (1 == 1) {  //Pós bomba ativada
-
-          Serial.println(millis() - tempoMillisLcd);  //para debug do tempo do lcd
-          if (millis() - tempoMillisLcd >= 60000) {   //se a bomba ficar 1min sem interação o display apaga a iluminação
-            lcd.noBacklight();                        // desliga a iluminacao do display
-            tempoMillisLcd = millis();
-          }
-
-          if (millis() - tempoLed >= 1000) {  // faz piscar o led mais rapido para dizer que a bomba esta ativa
-            estadoLed = !estadoLed;
-            digitalWrite(ledVerm, !estadoLed);
-            tempoLed = millis();
-          }
-          tecla_pressionada = teclado1.getKey();
-          if (tecla_pressionada == 'D') {
-            lcd.backlight();         // liga a luminacao do display
-            Serial.println("menu");  //-- para debug
-            return 1;                // funcao mestre para voltar para o menu iniciar
-          } else if (tecla_pressionada || digitalRead(botaoVerm) == LOW) {
-            lcd.backlight();  // liga a luminacao do display
-          }
-
-          tempoBomba = millis() - tempoinicioBomba;  // contagem pra explodir
-
-          Serial.print("Tempo para explodir: ");  //-- para debug do tempo da bomba
-          Serial.println(tempoBomba);             //-- para debug do tempo da bomba
-
-          lcd.setCursor(0, 0);
-          lcd.print("Explosao em 10m ");  //para lcd
-          lcd.setCursor(0, 1);
-          lcd.print("       ");
-          lcd.print(tempoBomba / 1000 / 60);
-          lcd.print("       ");
-
-
-
-          if (digitalRead(botaoVerd) == LOW) {  // para desarmar a bomba
-            lcd.backlight();                    // liga a luminacao do display
-            digitalWrite(ledVerm, LOW);
+          // Lógica do Modo Padrão
+          void modoPadrao(int valorTempoJogo, int valorTempoBomba) {
+            digitalWrite(ledAmarelo, HIGH);
+            digitalWrite(ledVerm, HIGH);
             digitalWrite(ledVerd, HIGH);
-            for (int i = 0; i < 8; i++) {  // reprodução da melodia 1
-              tone(buzzerPino, melody1[i], noteDuration1);
-              delay(50);
-              noTone(buzzerPino);
-              delay(50);
-            }
-            delay(500);  // Pausa entre melodías
-
-            Serial.println("A bomba foi defusada");  //-- para debug
-            lcd.setCursor(0, 0);
-            lcd.print("CT WIN!          ");
-            lcd.setCursor(0, 1);
-            lcd.print("Bomba defusada");
-            lcd.setCursor(0, 1);  // POSICIONA O CURSOR NA PRIMEIRA COLUNA DA LINHA 2  //para lcd
-            while (1) {
-              tecla_pressionada = teclado1.getKey();
-              if (tecla_pressionada == 'D') {
-                Serial.println("menu");  //-- para debug
-                return 1;                // funcao mestre para voltar para o menu iniciar
-              }
-            }
-          }
-
-          else if ((tempoBomba / 1000) / 60 >= 10) {
-            for (int i = 100; i <= 3000; i += 50) {  // melodia para dizer que a bomba explodiu
-              tone(buzzerPino, i);
-              delay(10);
-            }
-            // Pausa
-            noTone(buzzerPino);
-            for (int i = 100; i <= 3000; i += 50) {  // melodia para dizer que a bomba explodiu
-              tone(buzzerPino, i);
-              delay(10);
-            }
-            // Pausa
-            noTone(buzzerPino);
-            lcd.backlight();                     // liga a luminacao do display
-            Serial.println("A bomba explodiu");  //-- para debug
-            lcd.setCursor(0, 0);
-            lcd.print("A Bomba Explodiu");  //para lcd
-            lcd.setCursor(0, 1);            // POSICIONA O CURSOR NA PRIMEIRA COLUNA DA LINHA 2  //para lcd
-            lcd.print("   Terror WIN   ");
-            while (1) {
-              tecla_pressionada = teclado1.getKey();
-              if (tecla_pressionada == 'D') {
-                Serial.println("menu");  //-- para debug
-                return 1;                // funcao mestre para voltar para o menu iniciar
-              }
-            }
-          }
-        }
-      }
-    }
-
-    // Imprime a duração no Monitor Serial caso nao tenha pressionado o tempo necessário -- para debug
-    Serial.print("Duração da pressão: ");
-    Serial.print(duracaoPressao);
-    Serial.println(" milissegundos");
-  }
-}
-
-
-
-
-
-
-// Lógica do Modo Conquista
-void modoConquista(int valorTempoJogo) {
-
-  digitalWrite(ledAmarelo, HIGH);
-  digitalWrite(ledVerm, HIGH);
-  digitalWrite(ledVerd, HIGH);
-  delay(300);
-  digitalWrite(ledAmarelo, LOW);
-  digitalWrite(ledVerm, LOW);
-  digitalWrite(ledVerd, LOW);
-  duracaoPressao1 = 0;
-  duracaoPressao2 = 0;
-  resulVerd = 0;
-  resulVerm = 0;
-  tempoInicioJogo = millis();  //para zerar o millis e contar o tempo maximo corretamente
-  lcd.clear();
-
-  while (1 == 1) {
-
-    tecla_pressionada = teclado1.getKey();
-
-
-    if (millis() - tempoJogo >= 1000) {  // para atualizar o tempo para fim do game no lcd
-
-      lcd.setCursor(0, 0);
-      lcd.print("Tempo MAX ");
-      lcd.print(valorTempoJogo);
-      lcd.print("MIN");
-      lcd.setCursor(0, 1);  // POSICIONA O CURSOR NA PRIMEIRA COLUNA DA LINHA 2  //para lcd
-      tempoJogo = millis() - tempoInicioJogo;
-      Serial.println(tempoInicioJogo);
-      lcd.print((tempoJogo / 1000) / 60);  //minuto no lcd
-      lcd.print(":");
-      lcd.print(tempoJogo / 1000);  //segundo no lcd -- esta errado -- nao zera no segundo 60 fodase
-
-      if ((tempoJogo / 1000) / 60 == valorTempoJogo) {
-        Serial.println("CT WIN!");  //para debug
-        Serial.println("Fim do tempo");
-
-        lcd.setCursor(0, 0);
-        lcd.print("  FIM DE GAME   ");
-        lcd.setCursor(0, 1);
-        lcd.print("                ");
-        while (1) {
-
-          tecla_pressionada = teclado1.getKey();
-          if (tecla_pressionada == 'D') {
-            digitalWrite(ledVerd, LOW);
-            digitalWrite(ledVerm, LOW);
+            delay(300);
             digitalWrite(ledAmarelo, LOW);
+            digitalWrite(ledVerm, LOW);
+            digitalWrite(ledVerd, LOW);
 
-            Serial.println("     RESULTADO");  //-- para debug
-            Serial.print("Time A: ");
-            Serial.print(resulVerm);
-            Serial.print("   ");
-            Serial.print("Time B: ");
-            Serial.println(resulVerd);
-            for (int i = 0; i < 8; i++) {  // reprodução da melodia 1 para dar o resultado
-              tone(buzzerPino, melody1[i], noteDuration1);
-              delay(50);
-              noTone(buzzerPino);
-              delay(50);
-            }
-            if (resulVerm > resulVerd) {
-              digitalWrite(ledVerm, HIGH);
-              Serial.println("Time A GANHOU!");
-              lcd.setCursor(0, 0);
-              lcd.print("    RESULTADO   ");
-              lcd.setCursor(0, 1);
-              lcd.print("Time A Ganhou!!");
-            } else if (resulVerm < resulVerd) {
-              digitalWrite(ledVerd, HIGH);
-              lcd.setCursor(0, 0);
-              lcd.print("    RESULTADO   ");
-              lcd.setCursor(0, 1);
-              lcd.print("Time B Ganhou!!");
-            } else {
-              digitalWrite(ledVerd, HIGH);
-              digitalWrite(ledVerm, HIGH);
-              Serial.println("EMPATE!");
-              lcd.setCursor(0, 1);
-              lcd.print("     EMPATE     ");
-            }
-            while (1) {
+            tempoInicioJogo = millis();  //para zerar o millis e contar o tempo maximo corretamente
+            lcd.clear();
+            tempoMillisLcd = millis();
+
+            while (1 == 1) {
+
+              if (millis() - tempoLed >= 1000) {  // faz piscar o led para dizer que o jogo esta rolando
+                estadoLed = !estadoLed;
+                digitalWrite(ledVerd, !estadoLed);
+                tempoLed = millis();
+              }
+
+
+
+              if (millis() - tempoJogo >= 1000) {  // para atualizar o tempo para fim do game no lcd
+
+                lcd.setCursor(0, 0);
+                lcd.print("Tempo MAX ");
+                lcd.print(valorTempoJogo);
+                lcd.print("MIN");
+                lcd.setCursor(0, 1);  // POSICIONA O CURSOR NA PRIMEIRA COLUNA DA LINHA 2  //para lcd
+                tempoJogo = millis() - tempoInicioJogo;
+                lcd.print((tempoJogo / 1000) / 60);  //minuto no lcd
+                lcd.setCursor(2, 1);
+                lcd.print(":");
+                lcd.print(tempoJogo / 1000);  //segundo no lcd -- esta errado -- nao zera no segundo 60 fodase
+
+
+
+
+
+                if ((tempoJogo / 1000) / 60 == valorTempoJogo) {
+                  Serial.println("CT WIN!");  //para debug
+                  Serial.println("Bomba nao ativa");
+
+                  lcd.setCursor(0, 0);
+                  lcd.print("CT WIN!          ");
+                  lcd.setCursor(0, 1);
+                  lcd.print("Bomba nao ativa");
+                  lcd.backlight();  // liga a luminacao do display
+
+                  for (int i = 0; i < 8; i++) {  // reprodução da melodia 1
+                    tone(buzzerPino, melody1[i], noteDuration1);
+                    delay(50);
+                    noTone(buzzerPino);
+                    delay(50);
+                  }
+
+                  while (1) {
+                    tecla_pressionada = teclado1.getKey();
+                    if (tecla_pressionada == 'D') {
+                      Serial.println("menu");  //-- para debug
+                      return 1;                // funcao mestre para voltar para o menu iniciar
+                    }
+                  }
+                }
+              }
+
+
               tecla_pressionada = teclado1.getKey();
               if (tecla_pressionada == 'D') {
+                lcd.backlight();         // liga a luminacao do display
                 Serial.println("menu");  //-- para debug
                 return 1;                // funcao mestre para voltar para o menu iniciar
+              } else if (tecla_pressionada) {
+                lcd.backlight();  // liga a luminacao do display
+              }
+
+
+              Serial.println(millis() - tempoMillisLcd);  //para debug do tempo do lcd
+              if (millis() - tempoMillisLcd >= 60000) {   //se a bomba ficar 1min sem interação o display apaga a iluminação
+                lcd.noBacklight();                        // desliga a iluminacao do display
+                tempoMillisLcd = millis();
+              }
+
+              if (digitalRead(botaoVerd) == LOW) {  // para caso o CT vença sem o terror ativar a bomba
+                lcd.backlight();                    // liga a luminacao do display
+                digitalWrite(ledVerm, LOW);
+                digitalWrite(ledVerd, HIGH);
+                Serial.println("CT Win");
+                Serial.println("Bomba Inutilizada");
+                lcd.setCursor(0, 0);
+                lcd.print("   CT Win       ");  //para lcd
+                lcd.setCursor(0, 1);            // POSICIONA O CURSOR NA PRIMEIRA COLUNA DA LINHA 2  //para lcd
+                lcd.print("BombaInutilizada");
+                for (int i = 0; i < 8; i++) {  // reprodução da melodia 1
+                  tone(buzzerPino, melody1[i], noteDuration1);
+                  delay(50);
+                  noTone(buzzerPino);
+                  delay(50);
+                }
+
+
+                while (1) {
+                  tecla_pressionada = teclado1.getKey();
+                  if (tecla_pressionada == 'D') {
+                    Serial.println("menu");  //-- para debug
+                    return 1;                // funcao mestre para voltar para o menu iniciar
+                  }
+                }
+              }
+
+              int estadoBotao = digitalRead(botaoVerm);
+
+              // Verifica se o botão foi pressionado (transição de HIGH para LOW) para começar a calcular para a ativação da bomba
+              if (estadoBotao == LOW && !botaoPressionado) {
+                tempoInicio = millis();  // Armazena o tempo de início da pressão
+                botaoPressionado = true;
+                Serial.println("Botão pressionado");  //-- para debug
+                lcd.backlight();                      // liga a luminacao do display
+              }
+              // Verifica se o botão foi liberado
+              if (estadoBotao == HIGH && botaoPressionado) {
+                duracaoPressao = millis() - tempoInicio;  // Calcula a duração da pressão
+                botaoPressionado = false;
+                lcd.setCursor(1, 14);
+
+
+                if (duracaoPressao >= 10000) {  // Se a duração da pressão for >= a 10 segundos ativa a bomba
+                  lcd.backlight();              // liga a luminacao do display
+                  digitalWrite(ledVerd, LOW);
+                  digitalWrite(ledAmarelo, LOW);
+
+                  tone(buzzerPino, 800);
+                  delay(400);
+                  noTone(buzzerPino);
+                  Serial.print("bomba ativa");  //-- para debug
+                  lcd.setCursor(0, 0);
+                  lcd.print("  Bomba Ativa   ");  //para lcd
+                  lcd.setCursor(0, 1);            // POSICIONA O CURSOR NA PRIMEIRA COLUNA DA LINHA 2  //para lcd
+
+                  tempoinicioBomba = millis();  // para zerar o millis e contar os 15 segundos corretamente
+                  tempoMillisLcd = millis();    // para zerar o millis e contar o tempo de apagar o lcd corretamente
+                  tempoBomba = 0;
+
+                  while (1 == 1) {  //Pós bomba ativada
+
+                    Serial.println(millis() - tempoMillisLcd);  //para debug do tempo do lcd
+                    if (millis() - tempoMillisLcd >= 60000) {   //se a bomba ficar 1min sem interação o display apaga a iluminação
+                      lcd.noBacklight();                        // desliga a iluminacao do display
+                      tempoMillisLcd = millis();
+                    }
+
+                    if (millis() - tempoLed >= 1000) {  // faz piscar o led mais rapido para dizer que a bomba esta ativa
+                      estadoLed = !estadoLed;
+                      digitalWrite(ledVerm, !estadoLed);
+                      tempoLed = millis();
+                    }
+                    tecla_pressionada = teclado1.getKey();
+                    if (tecla_pressionada == 'D') {
+                      lcd.backlight();         // liga a luminacao do display
+                      Serial.println("menu");  //-- para debug
+                      return 1;                // funcao mestre para voltar para o menu iniciar
+                    } else if (tecla_pressionada || digitalRead(botaoVerm) == LOW) {
+                      lcd.backlight();  // liga a luminacao do display
+                    }
+
+                    tempoBomba = millis() - tempoinicioBomba;  // contagem pra explodir
+
+                    Serial.print("Tempo para explodir: ");  //-- para debug do tempo da bomba
+                    Serial.println(tempoBomba);             //-- para debug do tempo da bomba
+
+                    lcd.setCursor(0, 0);
+                    lcd.print("Explosao em ");  //para lcd
+                    lcd.print(valorTempoBomba);
+                    lcd.print("MI");
+                    lcd.setCursor(0, 1);
+                    lcd.print("       ");
+                    lcd.print(tempoBomba / 1000 / 60);
+                    lcd.print("       ");
+
+
+
+                    if (digitalRead(botaoVerd) == LOW) {  // para desarmar a bomba
+                      lcd.backlight();                    // liga a luminacao do display
+                      digitalWrite(ledVerm, LOW);
+                      digitalWrite(ledVerd, HIGH);
+                      for (int i = 0; i < 8; i++) {  // reprodução da melodia 1
+                        tone(buzzerPino, melody1[i], noteDuration1);
+                        delay(50);
+                        noTone(buzzerPino);
+                        delay(50);
+                      }
+                      delay(500);  // Pausa entre melodías
+
+                      Serial.println("A bomba foi defusada");  //-- para debug
+                      lcd.setCursor(0, 0);
+                      lcd.print("CT WIN!          ");
+                      lcd.setCursor(0, 1);
+                      lcd.print("Bomba defusada");
+                      lcd.setCursor(0, 1);  // POSICIONA O CURSOR NA PRIMEIRA COLUNA DA LINHA 2  //para lcd
+                      while (1) {
+                        tecla_pressionada = teclado1.getKey();
+                        if (tecla_pressionada == 'D') {
+                          Serial.println("menu");  //-- para debug
+                          return 1;                // funcao mestre para voltar para o menu iniciar
+                        }
+                      }
+                    }
+
+                    else if ((tempoBomba / 1000) / 60 >= valorTempoBomba) {
+                      for (int i = 100; i <= 3000; i += 50) {  // melodia para dizer que a bomba explodiu
+                        tone(buzzerPino, i);
+                        delay(10);
+                      }
+                      // Pausa
+                      noTone(buzzerPino);
+                      for (int i = 100; i <= 3000; i += 50) {  // melodia para dizer que a bomba explodiu
+                        tone(buzzerPino, i);
+                        delay(10);
+                      }
+                      // Pausa
+                      noTone(buzzerPino);
+                      lcd.backlight();                     // liga a luminacao do display
+                      Serial.println("A bomba explodiu");  //-- para debug
+                      lcd.setCursor(0, 0);
+                      lcd.print("A Bomba Explodiu");  //para lcd
+                      lcd.setCursor(0, 1);            // POSICIONA O CURSOR NA PRIMEIRA COLUNA DA LINHA 2  //para lcd
+                      lcd.print("   Terror WIN   ");
+                      while (1) {
+                        tecla_pressionada = teclado1.getKey();
+                        if (tecla_pressionada == 'D') {
+                          Serial.println("menu");  //-- para debug
+                          return 1;                // funcao mestre para voltar para o menu iniciar
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+
+              lcd.setCursor(13, 1);
+              lcd.print(duracaoPressao / 1000);  //imprime no lcd o tempo que esta sendo pressionado o botao vermelho
+              // Imprime a duração no Monitor Serial caso nao tenha pressionado o tempo necessário -- para debug
+              Serial.print("Duração da pressão: ");
+              Serial.print(duracaoPressao);
+              Serial.println(" milissegundos");
+            }
+          }
+
+
+
+
+
+
+          // Lógica do Modo Conquista
+          void modoConquista(int valorTempoJogo) {
+
+            digitalWrite(ledAmarelo, HIGH);
+            digitalWrite(ledVerm, HIGH);
+            digitalWrite(ledVerd, HIGH);
+            delay(300);
+            digitalWrite(ledAmarelo, LOW);
+            digitalWrite(ledVerm, LOW);
+            digitalWrite(ledVerd, LOW);
+            duracaoPressao1 = 0;
+            duracaoPressao2 = 0;
+            resulVerd = 0;
+            resulVerm = 0;
+            tempoInicioJogo = millis();  //para zerar o millis e contar o tempo maximo corretamente
+            tempoMillisLcd = millis();
+            lcd.clear();
+
+            while (1 == 1) {
+
+              if (millis() - tempoMillisLcd >= 60000) {  //se a bomba ficar 1min sem interação o display apaga a iluminação
+                lcd.noBacklight();                       // desliga a iluminacao do display
+                tempoMillisLcd = millis();
+              }
+
+              tecla_pressionada = teclado1.getKey();
+
+
+              if (millis() - tempoJogo >= 1000) {  // para atualizar o tempo para fim do game no lcd
+
+                lcd.setCursor(0, 0);
+                lcd.print("Tempo MAX ");
+                lcd.print(valorTempoJogo);
+                lcd.print("MIN");
+                lcd.setCursor(0, 1);  // POSICIONA O CURSOR NA PRIMEIRA COLUNA DA LINHA 2  //para lcd
+                tempoJogo = millis() - tempoInicioJogo;
+                Serial.println(tempoInicioJogo);
+                lcd.print((tempoJogo / 1000) / 60);  //minuto no lcd
+                lcd.print(":");
+                lcd.print(tempoJogo / 1000);  //segundo no lcd -- esta errado -- nao zera no segundo 60 fodase
+
+                if ((tempoJogo / 1000) / 60 == valorTempoJogo) {
+                  lcd.backlight();  // liga a luminacao do display
+                  Serial.println("Fim do tempo");
+
+                  lcd.setCursor(0, 0);
+                  lcd.print("  FIM DE GAME   ");
+                  lcd.setCursor(0, 1);
+                  lcd.print("                ");
+                  while (1) {
+
+                    tecla_pressionada = teclado1.getKey();
+                    if (tecla_pressionada == 'D') {
+                      digitalWrite(ledVerd, LOW);
+                      digitalWrite(ledVerm, LOW);
+                      digitalWrite(ledAmarelo, LOW);
+
+                      Serial.println("     RESULTADO");  //-- para debug
+                      Serial.print("Time A: ");
+                      Serial.print(resulVerd);
+                      Serial.print("   ");
+                      Serial.print("Time B: ");
+                      Serial.println(resulVerm);
+                      for (int i = 0; i < 8; i++) {  // reprodução da melodia 1 para dar o resultado
+                        tone(buzzerPino, melody1[i], noteDuration1);
+                        delay(50);
+                        noTone(buzzerPino);
+                        delay(50);
+                      }
+                      if (resulVerm > resulVerd) {
+                        digitalWrite(ledVerm, HIGH);
+                        Serial.println("Time B GANHOU!");
+                        lcd.setCursor(0, 0);
+                        lcd.print("    RESULTADO   ");
+                        lcd.setCursor(0, 1);
+                        lcd.print("Time B Ganhou!!");
+                      } else if (resulVerm < resulVerd) {
+                        digitalWrite(ledVerd, HIGH);
+                        lcd.setCursor(0, 0);
+                        lcd.print("    RESULTADO   ");
+                        lcd.setCursor(0, 1);
+                        Serial.println("Time A Ganhou!!");
+                        lcd.print("Time A Ganhou!!");
+                      } else {
+                        digitalWrite(ledVerd, HIGH);
+                        digitalWrite(ledVerm, HIGH);
+                        Serial.println("EMPATE!");
+                        lcd.setCursor(0, 1);
+                        lcd.print("     EMPATE     ");
+                      }
+                      while (1) {
+                        tecla_pressionada = teclado1.getKey();
+                        if (tecla_pressionada == 'D') {
+                          Serial.println("menu");  //-- para debug
+                          return 1;                // funcao mestre para voltar para o menu iniciar
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+
+              if (tecla_pressionada || digitalRead(botaoVerm) == LOW || digitalRead(botaoVerd) == LOW) {  //vai ver se algum botao foi pressionado para acender o lcd
+                lcd.backlight();                                                                          // liga a luminacao do display
+              }
+
+
+
+              if (millis() - tempoLed >= 1000) {  // faz piscar o led para dizer que o jogo esta rolando
+                estadoLed = !estadoLed;
+                digitalWrite(ledVerm, !estadoLed);
+                tempoLed = millis();
+              }
+              resulVerm = resulVerm + duracaoPressao1;
+              resulVerd = resulVerd + duracaoPressao2;
+
+              if (tecla_pressionada == 'D') {
+                lcd.backlight();  // liga a luminacao do display
+                digitalWrite(ledVerd, LOW);
+                digitalWrite(ledVerm, LOW);
+                digitalWrite(ledAmarelo, LOW);
+
+
+                Serial.println("     RESULTADO");  //-- para debug
+                Serial.print("Time A: ");
+                Serial.print(resulVerd);
+                Serial.print("   ");
+                Serial.print("Time B: ");
+                Serial.println(resulVerm);
+                for (int i = 0; i < 8; i++) {  // reprodução da melodia 1 para dar o resultado
+                  tone(buzzerPino, melody1[i], noteDuration1);
+                  delay(50);
+                  noTone(buzzerPino);
+                  delay(50);
+                }
+                if (resulVerm > resulVerd) {
+                  digitalWrite(ledVerm, HIGH);
+                  Serial.println("Time B GANHOU!");
+                  lcd.setCursor(0, 0);
+                  lcd.print("    RESULTADO   ");
+                  lcd.setCursor(0, 1);
+                  lcd.print("Time B Ganhou!!");
+                } else if (resulVerm < resulVerd) {
+                  digitalWrite(ledVerd, HIGH);
+                  Serial.println("Time A GANHOU!");
+                  lcd.setCursor(0, 0);
+                  lcd.print("    RESULTADO   ");
+                  lcd.setCursor(0, 1);
+                  lcd.print("Time A Ganhou!!");
+                } else {
+                  digitalWrite(ledVerd, HIGH);
+                  digitalWrite(ledVerm, HIGH);
+                  Serial.println("EMPATE!");
+                  lcd.setCursor(0, 1);
+                  lcd.print("     EMPATE     ");
+                }
+                while (1) {
+                  tecla_pressionada = teclado1.getKey();
+                  if (tecla_pressionada == 'D') {
+                    Serial.println("menu");  //-- para debug
+                    return 1;                // funcao mestre para voltar para o menu iniciar
+                  }
+                }
+              }
+
+
+              int estadoBotao1 = digitalRead(botaoVerm);
+              int estadoBotao2 = digitalRead(botaoVerd);
+              // Verifica se o botão do time A foi pressionado (transição de HIGH para LOW) para começar a calcular que ficou precionado
+              if (estadoBotao1 == LOW && !botaoPressionado1) {
+                tempoInicio1 = millis();  // Armazena o tempo de início da pressão
+                botaoPressionado1 = true;
+                Serial.println("Botão pressionado B");  //-- para debug
+                lcd.setCursor(13, 1);
+                lcd.println("RED");
+              }
+              // Verifica se o botão foi liberado (transição de LOW para HIGH)
+              if (estadoBotao1 == HIGH && botaoPressionado1) {
+                duracaoPressao1 = millis() - tempoInicio1;  // Calcula a duração da pressão
+                botaoPressionado1 = false;
+                lcd.setCursor(13, 1);
+                lcd.print("   ");
+              }
+              if (estadoBotao2 == LOW && !botaoPressionado2) {
+                tempoInicio2 = millis();  // Armazena o tempo de início da pressão
+                botaoPressionado2 = true;
+                Serial.println("Botão pressionado A");  //-- para debug
+                lcd.setCursor(11, 1);
+                lcd.println("GREEN");
+              }
+              // Verifica se o botão foi liberado (transição de LOW para HIGH)
+              if (estadoBotao2 == HIGH && botaoPressionado2) {
+                duracaoPressao2 = millis() - tempoInicio2;  // Calcula a duração da pressão
+                botaoPressionado2 = false;
+                lcd.setCursor(11, 1);
+                lcd.print("     ");
               }
             }
           }
-        }
-      }
-    }
-
-
-
-
-
-    if (millis() - tempoLed >= 1000) {  // faz piscar o led para dizer que o jogo esta rolando
-      estadoLed = !estadoLed;
-      digitalWrite(ledVerm, !estadoLed);
-      tempoLed = millis();
-    }
-    resulVerm = resulVerm + duracaoPressao1;
-    resulVerd = resulVerd + duracaoPressao2;
-
-    if (tecla_pressionada == 'D') {
-      digitalWrite(ledVerd, LOW);
-      digitalWrite(ledVerm, LOW);
-      digitalWrite(ledAmarelo, LOW);
-
-      Serial.println("     RESULTADO");  //-- para debug
-      Serial.print("Time A: ");
-      Serial.print(resulVerm);
-      Serial.print("   ");
-      Serial.print("Time B: ");
-      Serial.println(resulVerd);
-      for (int i = 0; i < 8; i++) {  // reprodução da melodia 1 para dar o resultado
-        tone(buzzerPino, melody1[i], noteDuration1);
-        delay(50);
-        noTone(buzzerPino);
-        delay(50);
-      }
-      if (resulVerm > resulVerd) {
-        digitalWrite(ledVerm, HIGH);
-        Serial.println("Time A GANHOU!");
-        lcd.setCursor(0, 0);
-        lcd.print("    RESULTADO   ");
-        lcd.setCursor(0, 1);
-        lcd.print("Time A Ganhou!!");
-      } else if (resulVerm < resulVerd) {
-        digitalWrite(ledVerd, HIGH);
-        Serial.println("Time B GANHOU!");
-        lcd.setCursor(0, 0);
-        lcd.print("    RESULTADO   ");
-        lcd.setCursor(0, 1);
-        lcd.print("Time B Ganhou!!");
-      } else {
-        digitalWrite(ledVerd, HIGH);
-        digitalWrite(ledVerm, HIGH);
-        Serial.println("EMPATE!");
-        lcd.setCursor(0, 1);
-        lcd.print("     EMPATE     ");
-      }
-      while (1) {
-        tecla_pressionada = teclado1.getKey();
-        if (tecla_pressionada == 'D') {
-          Serial.println("menu");  //-- para debug
-          return 1;                // funcao mestre para voltar para o menu iniciar
-        }
-      }
-    }
-
-
-    int estadoBotao1 = digitalRead(botaoVerm);
-    int estadoBotao2 = digitalRead(botaoVerd);
-    // Verifica se o botão do time A foi pressionado (transição de HIGH para LOW) para começar a calcular que ficou precionado
-    if (estadoBotao1 == LOW && !botaoPressionado1) {
-      tempoInicio1 = millis();  // Armazena o tempo de início da pressão
-      botaoPressionado1 = true;
-      Serial.println("Botão pressionado A");  //-- para debug
-    }
-    // Verifica se o botão foi liberado (transição de LOW para HIGH)
-    if (estadoBotao1 == HIGH && botaoPressionado1) {
-      duracaoPressao1 = millis() - tempoInicio1;  // Calcula a duração da pressão
-      botaoPressionado1 = false;
-    }
-    if (estadoBotao2 == LOW && !botaoPressionado2) {
-      tempoInicio2 = millis();  // Armazena o tempo de início da pressão
-      botaoPressionado2 = true;
-      Serial.println("Botão pressionado B");  //-- para debug
-    }
-    // Verifica se o botão foi liberado (transição de LOW para HIGH)
-    if (estadoBotao2 == HIGH && botaoPressionado2) {
-      duracaoPressao2 = millis() - tempoInicio2;  // Calcula a duração da pressão
-      botaoPressionado2 = false;
-    }
-  }
-}
