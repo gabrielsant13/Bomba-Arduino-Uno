@@ -8,8 +8,6 @@
 #define colunas 16
 #define linhas 2
 
-#define bombaMin 0   // Tempo MINIMO para ativar a bomba -- para utilizar na hora de mostrar ao usuario funcao MAP
-#define bombaMax 10  // Tempo MAXIMO para ativar a bomba -- para utilizar na hora de mostrar ao usuario funcao MAP
 
 //INSTANCIANDO O OBJETO
 LiquidCrystal_I2C lcd(endereco, colunas, linhas);
@@ -408,7 +406,7 @@ void modoPadrao(int valorTempoJogo, int valorTempoBomba) {
     duracaoPressao = millis() - tempoInicio;  // Calcula a duração da pressão
     lcd.setCursor(0, 1);
     
-    int numBlocks = map(duracaoPressao, 0, 10000, 0, 14);
+    int numBlocks = map(duracaoPressao, 0, 10000, 0, 16);
     
     // Desenha a barra de carregamento
     for (int i = 0; i < 16; i++) { // imprime os quadrados sendo carregados
@@ -420,7 +418,7 @@ void modoPadrao(int valorTempoJogo, int valorTempoBomba) {
     }
   } else{
     lcd.setCursor(0, 1);
-    lcd.print("              ");
+    lcd.print("                ");
   }
 
 
@@ -545,8 +543,8 @@ void modoPadrao(int valorTempoJogo, int valorTempoBomba) {
       }
     }
 
-    lcd.setCursor(14, 1);
-    lcd.print(duracaoPressao / 1000);  //imprime no lcd o tempo que esta sendo pressionado o botao vermelho
+   // lcd.setCursor(14, 1);
+   // lcd.print(duracaoPressao / 1000);  //imprime no lcd o tempo que esta sendo pressionado o botao vermelho
     // Imprime a duração no Monitor Serial caso nao tenha pressionado o tempo necessário -- para debug
     Serial.print("Duração da pressão: ");
     Serial.print(duracaoPressao);
