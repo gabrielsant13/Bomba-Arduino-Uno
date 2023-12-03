@@ -395,31 +395,31 @@ void modoPadrao(int valorTempoJogo, int valorTempoBomba) {
     int estadoBotao = digitalRead(botaoVerm);
 
     // Verifica se o botão foi pressionado (transição de HIGH para LOW) para começar a calcular para a ativação da bomba
-  if (estadoBotao == LOW && !botaoPressionado) {
-    tempoInicio = millis();  // Armazena o tempo de início da pressão
-    botaoPressionado = true;
-    Serial.println("Botão pressionado");  // Para debug
-    lcd.backlight();                      // Liga a iluminação do display
-  }
-
-  if (estadoBotao == LOW) {     // para mostrar no lcd a barra de carregamento
-    duracaoPressao = millis() - tempoInicio;  // Calcula a duração da pressão
-    lcd.setCursor(0, 1);
-    
-    int numBlocks = map(duracaoPressao, 0, 10000, 0, 16);
-    
-    // Desenha a barra de carregamento
-    for (int i = 0; i < 16; i++) { // imprime os quadrados sendo carregados
-      if (i < numBlocks) {
-        lcd.print(char(256));
-      } else {
-        lcd.print(" ");
-      }
+    if (estadoBotao == LOW && !botaoPressionado) {
+      tempoInicio = millis();  // Armazena o tempo de início da pressão
+      botaoPressionado = true;
+      Serial.println("Botão pressionado");  // Para debug
+      lcd.backlight();                      // Liga a iluminação do display
     }
-  } else{
-    lcd.setCursor(0, 1);
-    lcd.print("                ");
-  }
+
+    if (estadoBotao == LOW) {                   // para mostrar no lcd a barra de carregamento
+      duracaoPressao = millis() - tempoInicio;  // Calcula a duração da pressão
+      lcd.setCursor(0, 1);
+
+      int numBlocks = map(duracaoPressao, 0, 10000, 0, 16);
+
+      // Desenha a barra de carregamento
+      for (int i = 0; i < 16; i++) {  // imprime os quadrados sendo carregados
+        if (i < numBlocks) {
+          lcd.print(char(256));
+        } else {
+          lcd.print(" ");
+        }
+      }
+    } else {
+      lcd.setCursor(0, 1);
+      lcd.print("                ");
+    }
 
 
 
@@ -459,7 +459,12 @@ void modoPadrao(int valorTempoJogo, int valorTempoBomba) {
             estadoLed = !estadoLed;
             digitalWrite(ledVerm, !estadoLed);
             tempoLed = millis();
+            tone(buzzerPino, 1500);  // Frequência do som positivo debug para dizer que iniciou o game
+            delay(50);              // Duração do som positivo
+            noTone(buzzerPino);      // Desliga o som
+            delay(50);
           }
+
           tecla_pressionada = teclado1.getKey();
           if (tecla_pressionada == 'D') {
             lcd.backlight();         // liga a luminacao do display
@@ -543,8 +548,8 @@ void modoPadrao(int valorTempoJogo, int valorTempoBomba) {
       }
     }
 
-   // lcd.setCursor(14, 1);
-   // lcd.print(duracaoPressao / 1000);  //imprime no lcd o tempo que esta sendo pressionado o botao vermelho
+    // lcd.setCursor(14, 1);
+    // lcd.print(duracaoPressao / 1000);  //imprime no lcd o tempo que esta sendo pressionado o botao vermelho
     // Imprime a duração no Monitor Serial caso nao tenha pressionado o tempo necessário -- para debug
     Serial.print("Duração da pressão: ");
     Serial.print(duracaoPressao);
@@ -732,6 +737,15 @@ void modoConquista(int valorTempoJogo) {
       Serial.println("Botão pressionado B");  //-- para debug
       lcd.setCursor(13, 1);
       lcd.println("RED");
+              
+      
+    }
+    if(estadoBotao1 == LOW || estadoBotao2 == LOW){ //Para fazer barulho ao pressionar um dos dois botoes
+            tone(buzzerPino, 800);  // Frequência do som positivo debug para dizer que iniciou o game
+            delay(500);              // Duração do som positivo
+            noTone(buzzerPino);      // Desliga o som
+            delay(500);
+      
     }
     // Verifica se o botão foi liberado (transição de LOW para HIGH)
     if (estadoBotao1 == HIGH && botaoPressionado1) {
