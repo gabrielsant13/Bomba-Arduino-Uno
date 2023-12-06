@@ -8,6 +8,10 @@
 #define colunas 16
 #define linhas 2
 
+//DEFINICAO DOS RELES
+#define releSirene 12
+#define releBomba 13
+
 
 //INSTANCIANDO O OBJETO
 LiquidCrystal_I2C lcd(endereco, colunas, linhas);
@@ -83,6 +87,9 @@ void setup() {
   pinMode(ledAmarelo, OUTPUT);
   pinMode(ledVerd, OUTPUT);
   pinMode(buzzerPino, OUTPUT);
+  pinMode(releBomba, OUTPUT);
+  pinMode(releSirene, OUTPUT);
+
 
   // Configura os botões como entrada com resistor de pull-up
   pinMode(botaoVerm, INPUT_PULLUP);
@@ -99,6 +106,7 @@ void loop() {
   digitalWrite(ledAmarelo, HIGH);
   digitalWrite(ledVerm, LOW);
   digitalWrite(ledVerd, LOW);
+  digitalWrite(releSirene, HIGH);  // deixar a sirene desativada
 
   valorTempoJogo = 0;  // Reinicia a variável de tempo do jogo
 
@@ -119,6 +127,7 @@ void loop() {
 
   if (tecla_pressionada == 'A') {  // Seleciona o modo de jogo Padrao
 gotoPadrao:
+
     valorTempoJogo = 0;
     valorTempoBomba = 0;
     lcd.clear();
@@ -329,7 +338,10 @@ void modoPadrao(int valorTempoJogo, int valorTempoBomba) {
         lcd.print("CT WIN!          ");
         lcd.setCursor(0, 1);
         lcd.print("Bomba nao ativa");
-        lcd.backlight();  // liga a luminacao do display
+        lcd.backlight();                 // liga a luminacao do display
+        digitalWrite(releSirene, LOW);   //ativa a sirene
+        delay(3000);                     //sirene toca por 3 segundos
+        digitalWrite(releSirene, HIGH);  //desativa a sirene
 
         for (int i = 0; i < 8; i++) {  // reprodução da melodia 1
           tone(buzzerPino, melody1[i], noteDuration1);
@@ -375,6 +387,10 @@ void modoPadrao(int valorTempoJogo, int valorTempoBomba) {
       lcd.print("   CT Win       ");  //para lcd
       lcd.setCursor(0, 1);            // POSICIONA O CURSOR NA PRIMEIRA COLUNA DA LINHA 2  //para lcd
       lcd.print("BombaInutilizada");
+      digitalWrite(releSirene, LOW);   //ativa a sirene
+      delay(3000);                     //sirene toca por 3 segundos
+      digitalWrite(releSirene, HIGH);  //desativa a sirene
+
       for (int i = 0; i < 8; i++) {  // reprodução da melodia 1
         tone(buzzerPino, melody1[i], noteDuration1);
         delay(50);
@@ -447,6 +463,10 @@ void modoPadrao(int valorTempoJogo, int valorTempoBomba) {
         tempoMillisLcd = millis();    // para zerar o millis e contar o tempo de apagar o lcd corretamente
         tempoBomba = 0;
 
+        digitalWrite(releSirene, LOW);   //ativa a sirene
+        delay(1500);                     //sirene toca por 1,5 segundos para sinalizar a ativacao da bomba
+        digitalWrite(releSirene, HIGH);  //desativa a sirene
+
         while (1 == 1) {  //Pós bomba ativada
 
           Serial.println(millis() - tempoMillisLcd);  //para debug do tempo do lcd
@@ -460,7 +480,7 @@ void modoPadrao(int valorTempoJogo, int valorTempoBomba) {
             digitalWrite(ledVerm, !estadoLed);
             tempoLed = millis();
             tone(buzzerPino, 1500);  // Frequência do som positivo debug para dizer que iniciou o game
-            delay(50);              // Duração do som positivo
+            delay(50);               // Duração do som positivo
             noTone(buzzerPino);      // Desliga o som
             delay(50);
           }
@@ -500,7 +520,6 @@ void modoPadrao(int valorTempoJogo, int valorTempoBomba) {
               noTone(buzzerPino);
               delay(50);
             }
-            delay(500);  // Pausa entre melodías
 
             Serial.println("A bomba foi defusada");  //-- para debug
             lcd.setCursor(0, 0);
@@ -508,6 +527,11 @@ void modoPadrao(int valorTempoJogo, int valorTempoBomba) {
             lcd.setCursor(0, 1);
             lcd.print("Bomba defusada");
             lcd.setCursor(0, 1);  // POSICIONA O CURSOR NA PRIMEIRA COLUNA DA LINHA 2  //para lcd
+
+            digitalWrite(releSirene, LOW);   //ativa a sirene
+            delay(3000);                     //sirene toca por 3 segundos
+            digitalWrite(releSirene, HIGH);  //desativa a sirene
+
             while (1) {
               tecla_pressionada = teclado1.getKey();
               if (tecla_pressionada == 'D') {
@@ -536,6 +560,11 @@ void modoPadrao(int valorTempoJogo, int valorTempoBomba) {
             lcd.print("A Bomba Explodiu");  //para lcd
             lcd.setCursor(0, 1);            // POSICIONA O CURSOR NA PRIMEIRA COLUNA DA LINHA 2  //para lcd
             lcd.print("   Terror WIN   ");
+
+            digitalWrite(releSirene, LOW);   //ativa a sirene
+            delay(6000);                     //sirene toca por 6 segundos para sinalizar que a bomba explodiu
+            digitalWrite(releSirene, HIGH);  //desativa a sirene
+
             while (1) {
               tecla_pressionada = teclado1.getKey();
               if (tecla_pressionada == 'D') {
@@ -606,6 +635,11 @@ void modoConquista(int valorTempoJogo) {
       if ((tempoJogo / 1000) / 60 == valorTempoJogo) {
         lcd.backlight();  // liga a luminacao do display
         Serial.println("Fim do tempo");
+
+        digitalWrite(releSirene, LOW);   //ativa a sirene
+        delay(3000);                     //sirene toca por 3 segundos para sinalizar o fim do game
+        digitalWrite(releSirene, HIGH);  //desativa a sirene
+
 
         lcd.setCursor(0, 0);
         lcd.print("  FIM DE GAME   ");
@@ -684,6 +718,10 @@ void modoConquista(int valorTempoJogo) {
       digitalWrite(ledVerm, LOW);
       digitalWrite(ledAmarelo, LOW);
 
+      digitalWrite(releSirene, LOW);   //ativa a sirene
+      delay(3000);                     //sirene toca por 3 segundos para sinalizar o fim do game
+      digitalWrite(releSirene, HIGH);  //desativa a sirene
+
 
       Serial.println("     RESULTADO");  //-- para debug
       Serial.print("Time A: ");
@@ -737,15 +775,12 @@ void modoConquista(int valorTempoJogo) {
       Serial.println("Botão pressionado B");  //-- para debug
       lcd.setCursor(13, 1);
       lcd.println("RED");
-              
-      
     }
-    if(estadoBotao1 == LOW || estadoBotao2 == LOW){ //Para fazer barulho ao pressionar um dos dois botoes
-            tone(buzzerPino, 800);  // Frequência do som positivo debug para dizer que iniciou o game
-            delay(500);              // Duração do som positivo
-            noTone(buzzerPino);      // Desliga o som
-            delay(500);
-      
+    if (estadoBotao1 == LOW || estadoBotao2 == LOW) {  //Para fazer barulho ao pressionar um dos dois botoes
+      tone(buzzerPino, 800);                           // Frequência do som positivo debug para dizer que iniciou o game
+      delay(500);                                      // Duração do som positivo
+      noTone(buzzerPino);                              // Desliga o som
+      delay(500);
     }
     // Verifica se o botão foi liberado (transição de LOW para HIGH)
     if (estadoBotao1 == HIGH && botaoPressionado1) {
