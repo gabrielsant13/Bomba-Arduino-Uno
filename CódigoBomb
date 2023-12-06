@@ -354,7 +354,8 @@ void modoPadrao(int valorTempoJogo, int valorTempoBomba) {
           tecla_pressionada = teclado1.getKey();
           if (tecla_pressionada == 'D') {
             Serial.println("menu");  //-- para debug
-            return 1;                // funcao mestre para voltar para o menu iniciar
+
+            return 1;  // funcao mestre para voltar para o menu iniciar
           }
         }
       }
@@ -363,9 +364,12 @@ void modoPadrao(int valorTempoJogo, int valorTempoBomba) {
 
     tecla_pressionada = teclado1.getKey();
     if (tecla_pressionada == 'D') {
-      lcd.backlight();         // liga a luminacao do display
-      Serial.println("menu");  //-- para debug
-      return 1;                // funcao mestre para voltar para o menu iniciar
+      lcd.backlight();                 // liga a luminacao do display
+      Serial.println("menu");          //-- para debug
+      digitalWrite(releSirene, LOW);   //ativa a sirene
+      delay(1000);                     //sirene toca por 1 segundo para sinalizar o fim do game de forma manual
+      digitalWrite(releSirene, HIGH);  //desativa a sirene
+      return 1;                        // funcao mestre para voltar para o menu iniciar
     } else if (tecla_pressionada) {
       lcd.backlight();  // liga a luminacao do display
     }
@@ -636,9 +640,7 @@ void modoConquista(int valorTempoJogo) {
         lcd.backlight();  // liga a luminacao do display
         Serial.println("Fim do tempo");
 
-        digitalWrite(releSirene, LOW);   //ativa a sirene
-        delay(3000);                     //sirene toca por 3 segundos para sinalizar o fim do game
-        digitalWrite(releSirene, HIGH);  //desativa a sirene
+
 
 
         lcd.setCursor(0, 0);
@@ -646,6 +648,11 @@ void modoConquista(int valorTempoJogo) {
         lcd.setCursor(0, 1);
         lcd.print("                ");
         while (1) {
+
+
+          digitalWrite(releSirene, LOW);   //ativa a sirene
+          delay(3000);                     //sirene toca por 3 segundos para sinalizar o fim do game
+          digitalWrite(releSirene, HIGH);  //desativa a sirene
 
           tecla_pressionada = teclado1.getKey();
           if (tecla_pressionada == 'D') {
@@ -686,6 +693,8 @@ void modoConquista(int valorTempoJogo) {
               lcd.setCursor(0, 1);
               lcd.print("     EMPATE     ");
             }
+
+
             while (1) {
               tecla_pressionada = teclado1.getKey();
               if (tecla_pressionada == 'D') {
@@ -718,9 +727,7 @@ void modoConquista(int valorTempoJogo) {
       digitalWrite(ledVerm, LOW);
       digitalWrite(ledAmarelo, LOW);
 
-      digitalWrite(releSirene, LOW);   //ativa a sirene
-      delay(3000);                     //sirene toca por 3 segundos para sinalizar o fim do game
-      digitalWrite(releSirene, HIGH);  //desativa a sirene
+
 
 
       Serial.println("     RESULTADO");  //-- para debug
@@ -756,6 +763,11 @@ void modoConquista(int valorTempoJogo) {
         lcd.setCursor(0, 1);
         lcd.print("     EMPATE     ");
       }
+
+      digitalWrite(releSirene, LOW);   //ativa a sirene
+      delay(1000);                     //sirene toca por 1 segundos para sinalizar o fim do game de forma manual
+      digitalWrite(releSirene, HIGH);  //desativa a sirene
+
       while (1) {
         tecla_pressionada = teclado1.getKey();
         if (tecla_pressionada == 'D') {
